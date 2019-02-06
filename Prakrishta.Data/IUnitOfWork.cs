@@ -18,7 +18,7 @@ namespace Prakrishta.Data
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Contract that defines set of methods to be performed on repositories
+    /// Contract that defines set of methods to create repositories and atomic operations
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
@@ -51,7 +51,7 @@ namespace Prakrishta.Data
     }
 
     /// <summary>
-    /// Contract that defines set of methods to be performed on repositories
+    /// Contract that defines set of methods to create repositories and atomic operations
     /// </summary>
     /// <typeparam name="TContext">Database context type</typeparam>
     public interface IUnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
