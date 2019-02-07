@@ -36,4 +36,4 @@ public ActionResult<IEnumerable<User>> Get()
 
 ```
 
-The code base is licensed under opern source, please feel free to use it in your project or edit as per your need.
+The code base is licensed under open source, please feel free to use it in your project or edit as per your need.
