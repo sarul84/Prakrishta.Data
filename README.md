@@ -31,7 +31,7 @@ public UserController(IUnitOfWork<UserContext> uow)
 [HttpGet]
 public ActionResult<IEnumerable<User>> Get()
 {
-    var userRepository = this._uow.GetReadRepository<User>().GetAll();
+    var userList = this._uow.GetReadRepository<User>().GetAll();
 }
 
 ```
