@@ -8,6 +8,7 @@
     <PackageProjectUrl>https://github.com/sarul84/Prakrishta.Data</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sarul84/Prakrishta.Data</RepositoryUrl>
     <PackageTags>C#, EF, EF Core, .Net Standard, Repository pattern, Unit of work, uow</PackageTags>
+    <Copyright>Copyright © Prakrishta Technologies 2017</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
