@@ -34,7 +34,7 @@ namespace Prakrishta.Data.Repositories
         /// Initializes a new instance of the <see cref="RepositoryBase.cs"/> class.
         /// </summary>
         /// <param name="dbContext">The database context</param>
-        public RepositoryBase(DbContext dbContext)
+        protected RepositoryBase(DbContext dbContext)
         {
             this.DbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext), "The Database context is null");
             this.DbSet = this.DbContext.Set<TEntity>();
@@ -50,7 +50,7 @@ namespace Prakrishta.Data.Repositories
         /// <param name="take">The number of records required</param>
         /// <param name="asNoTracking">True if table tracking required</param>
         /// <returns>IQueryable entity</returns>
-        protected virtual IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> filter = null,
+        protected IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null, int? skip = null, int? take = null,
             bool asNoTracking = false)
@@ -58,39 +58,35 @@ namespace Prakrishta.Data.Repositories
             includeProperties = includeProperties ?? string.Empty;
             IQueryable<TEntity> query = this.DbSet;
 
-            try
-            {
-                foreach (var includeProperty in includeProperties.Split
+            foreach (var includeProperty in includeProperties.Split
                     (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(includeProperty);
-                }
-
-                if (filter != null)
-                {
-                    query = query.Where(filter);
-                }
-
-                if (orderBy != null)
-                {
-                    query = orderBy(query);
-                }
-
-                if (skip.HasValue)
-                {
-                    query = query.Skip(skip.Value);
-                }
-
-                if (take.HasValue)
-                {
-                    query = query.Take(take.Value);
-                }
-
-                if (asNoTracking) query = query.AsNoTracking();
-            }
-            catch (Exception)
             {
-                throw;
+                query = query.Include(includeProperty);
+            }
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            if (skip.HasValue)
+            {
+                query = query.Skip(skip.Value);
+            }
+
+            if (take.HasValue)
+            {
+                query = query.Take(take.Value);
+            }
+
+            if (asNoTracking)
+            {
+                return query.AsNoTracking<TEntity>();
             }
 
             return query;

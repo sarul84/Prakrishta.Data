@@ -9,8 +9,9 @@
 
 namespace Prakrishta.Data.Entities
 {
-    using Prakrishta.Data.Entities.Interfaces;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using Prakrishta.Data.Entities.Interfaces;
 
     /// <summary>
     ///  Abstract entity class
@@ -19,6 +20,7 @@ namespace Prakrishta.Data.Entities
     public abstract class Entity<TId> : IEntity<TId> where TId : struct
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual TId Id { get; set; }
     }
 }

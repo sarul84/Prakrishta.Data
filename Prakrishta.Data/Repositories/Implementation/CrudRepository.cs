@@ -22,7 +22,7 @@ namespace Prakrishta.Data.Repositories.Implementation
     /// The repository class that perform CRUD operation
     /// </summary>
     /// <typeparam name="TEntity">The datatable entity type</typeparam>
-    public class CrudRepository<TEntity> : ReadRepository<TEntity>, IReadRepository<TEntity>, ICudRepository<TEntity> where TEntity : class
+    public class CrudRepository<TEntity> : ReadRepository<TEntity>, ICrudRepository<TEntity> where TEntity : class
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CrudRepository.cs"/> class.

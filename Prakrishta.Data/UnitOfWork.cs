@@ -27,7 +27,7 @@ namespace Prakrishta.Data
         /// <summary>
         /// Holds collection of repositories
         /// </summary>
-        private IDictionary<Type, object> repositories;
+        private ConcurrentDictionary<string, object> repositories;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitOfWork.cs"/> class.
@@ -35,7 +35,7 @@ namespace Prakrishta.Data
         /// <param name="context">The database context</param>
         public UnitOfWork(TContext context)
         {
-            this.Context = context;
+            this.Context = context ?? throw new ArgumentNullException(nameof(context), "The database context is null");
         }
 
         /// <summary>
@@ -57,16 +57,16 @@ namespace Prakrishta.Data
         {
             if (this.repositories == null)
             {
-                this.repositories = new ConcurrentDictionary<Type, object>();
+                this.repositories = new ConcurrentDictionary<string, object>();
             }
 
-            var type = typeof(TEntity);
+            var type = $"Crud - {typeof(TEntity).Name}";
             if (!this.repositories.ContainsKey(type))
             {
-                this.repositories[type] = new CrudRepository<TEntity>(Context);
+                this.repositories.TryAdd(type, new CrudRepository<TEntity>(Context));
             }
 
-            return (ICrudRepository<TEntity>)this.repositories[type];
+            return this.repositories[type] as ICrudRepository<TEntity>;
         }
 
         /// <inheritdoc />
@@ -74,16 +74,16 @@ namespace Prakrishta.Data
         {
             if (this.repositories == null)
             {
-                this.repositories = new ConcurrentDictionary<Type, object>();
+                this.repositories = new ConcurrentDictionary<string, object>();
             }
 
-            var type = typeof(TEntity);
+            var type = $"Read - {typeof(TEntity).Name}";
             if (!this.repositories.ContainsKey(type))
             {
-                this.repositories[type] = new ReadRepository<TEntity>(Context);
+                this.repositories.TryAdd(type, new ReadRepository<TEntity>(Context));
             }
 
-            return (IReadRepository<TEntity>)this.repositories[type];
+            return this.repositories[type] as IReadRepository<TEntity>;
         }
 
         /// <inheritdoc />
