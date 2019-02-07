@@ -35,5 +35,16 @@ public ActionResult<IEnumerable<User>> Get()
 }
 
 ```
+The repository has both synchronous and asynchronous methods and also supports pagination as well. The associated tables can also queried through "Included" parameter, for example if user detail requires relevant entity "Address" as well then the following code snippet will do the job.
+
+```
+[HttpGet]
+public ActionResult<IEnumerable<User>> Get()
+{
+    var userList = this._uow.GetReadRepository<User>().GetAll("Address");
+}
+```
+
+All of the read methods support filtering and has support for sorting, record change tracking.
 
 The code base is licensed under open source, please feel free to use it in your project or edit as per your need.
