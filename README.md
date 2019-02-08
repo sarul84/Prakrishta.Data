@@ -1,6 +1,12 @@
 # Prakrishta.Data
 Generic Repository and Unit of work pattern with EF.Core
 
+Package installer:
+
+```
+Install-Package Prakrishta.Data
+```
+
 Easy to create Unit of work and repository.
 
 ```
