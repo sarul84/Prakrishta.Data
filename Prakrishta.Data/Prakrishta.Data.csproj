@@ -1,13 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Authors>Arul Sengottaiyan</Authors>
     <Company>Prakrishta Technologies</Company>
     <Description>Generic Repository and Unit of work pattern with EF.Core</Description>
     <PackageProjectUrl>https://github.com/sarul84/Prakrishta.Data</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sarul84/Prakrishta.Data</RepositoryUrl>
-    <PackageTags>C#, EF, EF Core, .Net Standard, Repository pattern, Unit of work, uow</PackageTags>
+    <PackageTags>C#, EF, EFCore, .NetStandard, Repository pattern, Unitofwork, uow</PackageTags>
     <Copyright>Copyright © Prakrishta Technologies 2017</Copyright>
   </PropertyGroup>
 
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
   </ItemGroup>
 
 </Project>

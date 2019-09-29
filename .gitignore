@@ -9,3 +9,4 @@
 /.vs
 /Prakrishta.Data/bin
 /Prakrishta.Data.Sample/bin/Release/netcoreapp2.2
+/Prakrishta.Data.Sample/bin/Debug/netcoreapp3.0

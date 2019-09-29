@@ -55,7 +55,7 @@ namespace Prakrishta.Data.Repositories
             string includeProperties = null, int? skip = null, int? take = null,
             bool asNoTracking = false)
         {
-            includeProperties = includeProperties ?? string.Empty;
+            includeProperties ??= string.Empty;
             IQueryable<TEntity> query = this.DbSet;
 
             foreach (var includeProperty in includeProperties.Split
