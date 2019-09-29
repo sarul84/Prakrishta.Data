@@ -1,6 +1,9 @@
 # Prakrishta.Data
 Generic Repository and Unit of work pattern with EF.Core
 
+Build status:
+[![Build Status](https://dev.azure.com/prakrishta0270/Prakrishta%20Open%20Source/_apis/build/status/sarul84.Prakrishta.Data?branchName=master)](https://dev.azure.com/prakrishta0270/Prakrishta%20Open%20Source/_build/latest?definitionId=2&branchName=master)
+
 Package installer:
 
 ```
