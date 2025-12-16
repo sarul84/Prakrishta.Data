@@ -9,20 +9,26 @@
 
 namespace Prakrishta.Data
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Prakrishta.Data.Entities.Interfaces;
     using Prakrishta.Data.Repositories.Implementation;
     using Prakrishta.Data.Repositories.Interfaces;
+    using Prakrishta.Data.RepositoriesV2.Implementations;
+    using Prakrishta.Data.RepositoriesV2.Interfaces;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Unit of work implementation
     /// </summary>
     /// <typeparam name="TContext">The database context</typeparam>
-    public class UnitOfWork<TContext> : IUnitOfWork<TContext>, IUnitOfWork where TContext : DbContext
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="UnitOfWork.cs"/> class.
+    /// </remarks>
+    /// <param name="context">The database context</param>
+    public class UnitOfWork<TContext>(TContext context) : IUnitOfWork<TContext>, IUnitOfWork where TContext : DbContext
     {
         /// <summary>
         /// Holds collection of repositories
@@ -30,27 +36,15 @@ namespace Prakrishta.Data
         private ConcurrentDictionary<string, object> repositories;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnitOfWork.cs"/> class.
-        /// </summary>
-        /// <param name="context">The database context</param>
-        public UnitOfWork(TContext context)
-        {
-            this.Context = context ?? throw new ArgumentNullException(nameof(context), "The database context is null");
-        }
-
-        /// <summary>
         /// Gets database context object
         /// </summary>
-        public TContext Context { get; }
+        public TContext Context { get; } = context ?? throw new ArgumentNullException(nameof(context), "The database context is null");
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting
         /// unmanaged resources database context.
         /// </summary>
-        public void Dispose()
-        {
-            Context?.Dispose();
-        }
+        public void Dispose() => Context?.Dispose();
 
         /// <inheritdoc />
         public ICrudRepository<TEntity> GetCrudRepository<TEntity>() where TEntity : class
@@ -106,7 +100,82 @@ namespace Prakrishta.Data
         }
 
         /// <inheritdoc />
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            using (var transaction = this.Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    int updateCount = await this.Context
+                        .SaveChangesAsync(cancellationToken)
+                        .ConfigureAwait(false);
+
+                    transaction.Commit();
+                    return updateCount;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public class UnitOfWorkV2<TContext>(TContext context) : IUnitOfWorkV2<TContext> where TContext : DbContext
+    {
+        /// <summary>
+        /// Holds collection of repositories
+        /// </summary>
+        private ConcurrentDictionary<string, object> repositories;
+
+        /// <summary>
+        /// Gets database context object
+        /// </summary>
+        public TContext Context { get; } = context ?? throw new ArgumentNullException(nameof(context), "The database context is null");
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        /// unmanaged resources database context.
+        /// </summary>
+        public void Dispose() => Context?.Dispose();
+
+        /// <inheritdoc />
+        public IPersistenceRepository<TEntity, TId> GetPersistenceRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>
+        {
+            if (this.repositories == null)
+            {
+                this.repositories = new ConcurrentDictionary<string, object>();
+            }
+
+            var type = $"Persistence - {typeof(TEntity).Name}";
+            if (!this.repositories.ContainsKey(type))
+            {
+                this.repositories.TryAdd(type, new PersistenceRepository<TEntity, TId>(Context));
+            }
+
+            return this.repositories[type] as IPersistenceRepository<TEntity, TId>;
+        }
+
+        /// <inheritdoc />
+        public IQueryRepository<TEntity, TId> GetQueryRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>
+        {
+            if (this.repositories == null)
+            {
+                this.repositories = new ConcurrentDictionary<string, object>();
+            }
+
+            var type = $"Query - {typeof(TEntity).Name}";
+            if (!this.repositories.ContainsKey(type))
+            {
+                this.repositories.TryAdd(type, new QueryRepository<TEntity, TId>(Context));
+            }
+
+            return this.repositories[type] as IQueryRepository<TEntity, TId>;
+        }
+
+        /// <inheritdoc />
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             using (var transaction = this.Context.Database.BeginTransaction())
             {

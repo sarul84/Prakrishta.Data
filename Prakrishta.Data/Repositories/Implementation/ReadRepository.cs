@@ -22,16 +22,12 @@ namespace Prakrishta.Data.Repositories.Implementation
     /// The repository class that performs all read operations
     /// </summary>
     /// <typeparam name="TEntity">The datatable entity type</typeparam>
-    public class ReadRepository<TEntity> : RepositoryBase<TEntity>, IReadRepository<TEntity> where TEntity : class
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="ReadRepository.cs"/> class.
+    /// </remarks>
+    /// <param name="dbContext">The database context</param>
+    public class ReadRepository<TEntity>(DbContext dbContext) : RepositoryBase<TEntity>(dbContext), IReadRepository<TEntity> where TEntity : class
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ReadRepository.cs"/> class.
-        /// </summary>
-        /// <param name="dbContext">The database context</param>
-        public ReadRepository(DbContext dbContext) : base(dbContext)
-        {
-
-        }
 
         /// <inheritdoc />
         public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter,

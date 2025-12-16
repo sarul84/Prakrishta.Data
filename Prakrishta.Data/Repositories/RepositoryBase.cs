@@ -59,7 +59,7 @@ namespace Prakrishta.Data.Repositories
             IQueryable<TEntity> query = this.DbSet;
 
             foreach (var includeProperty in includeProperties.Split
-                    (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                    ([','], StringSplitOptions.RemoveEmptyEntries))
             {
                 query = query.Include(includeProperty);
             }
