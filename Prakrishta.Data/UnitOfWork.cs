@@ -28,6 +28,7 @@ namespace Prakrishta.Data
     /// Initializes a new instance of the <see cref="UnitOfWork.cs"/> class.
     /// </remarks>
     /// <param name="context">The database context</param>
+    [Obsolete("Use UnitOfWorkV2<TContext> instead.", error: false)]
     public class UnitOfWork<TContext>(TContext context) : IUnitOfWork<TContext>, IUnitOfWork where TContext : DbContext
     {
         /// <summary>
@@ -143,10 +144,7 @@ namespace Prakrishta.Data
         /// <inheritdoc />
         public IPersistenceRepository<TEntity, TId> GetPersistenceRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>
         {
-            if (this.repositories == null)
-            {
-                this.repositories = new ConcurrentDictionary<string, object>();
-            }
+            this.repositories ??= new ConcurrentDictionary<string, object>();
 
             var type = $"Persistence - {typeof(TEntity).Name}";
             if (!this.repositories.ContainsKey(type))
@@ -160,10 +158,7 @@ namespace Prakrishta.Data
         /// <inheritdoc />
         public IQueryRepository<TEntity, TId> GetQueryRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>
         {
-            if (this.repositories == null)
-            {
-                this.repositories = new ConcurrentDictionary<string, object>();
-            }
+            this.repositories ??= new ConcurrentDictionary<string, object>();
 
             var type = $"Query - {typeof(TEntity).Name}";
             if (!this.repositories.ContainsKey(type))

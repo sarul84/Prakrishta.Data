@@ -9,6 +9,7 @@
 
 namespace Prakrishta.Data.Repositories.Interfaces
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace Prakrishta.Data.Repositories.Interfaces
     /// Interface for repository doing create, update and delete operations
     /// </summary>
     /// <typeparam name="TEnity">The datatable entity type</typeparam>
+    [Obsolete]
     public interface ICudRepository<TEntity> where TEntity : class
     {
         /// <summary>

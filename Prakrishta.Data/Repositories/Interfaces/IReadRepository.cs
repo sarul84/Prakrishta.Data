@@ -20,6 +20,7 @@ namespace Prakrishta.Data.Repositories.Interfaces
     /// Repository interface with READ only operations
     /// </summary>
     /// <typeparam name="TEntity">The datatable entity type</typeparam>
+    [Obsolete]
     public interface IReadRepository<TEntity> where TEntity : class
     {
         /// <summary>

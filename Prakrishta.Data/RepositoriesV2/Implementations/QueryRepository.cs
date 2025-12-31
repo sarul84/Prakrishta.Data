@@ -34,7 +34,7 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false)
         {
-            return this.GetQueryable(filter, orderBy, includeProperties, skip, take, asNoTracking).ToList();
+            return [.. this.GetQueryable(filter, orderBy, includeProperties, skip, take, asNoTracking)];
         }
 
         /// <inheritdoc />

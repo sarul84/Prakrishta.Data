@@ -20,6 +20,7 @@ namespace Prakrishta.Data
     /// <summary>
     /// Contract that defines set of methods to create repositories and atomic operations
     /// </summary>
+    [Obsolete()]
     public interface IUnitOfWork : IDisposable
     {
         /// <summary>
@@ -83,6 +84,7 @@ namespace Prakrishta.Data
     /// Contract that defines set of methods to create repositories and atomic operations
     /// </summary>
     /// <typeparam name="TContext">Database context type</typeparam>
+    [Obsolete("Use IUnitOfWorkV2<TContext> instead.", error: false)]
     public interface IUnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
     {
         /// <summary>

@@ -26,6 +26,7 @@ namespace Prakrishta.Data.Repositories.Implementation
     /// Initializes a new instance of the <see cref="ReadRepository.cs"/> class.
     /// </remarks>
     /// <param name="dbContext">The database context</param>
+    [Obsolete]
     public class ReadRepository<TEntity>(DbContext dbContext) : RepositoryBase<TEntity>(dbContext), IReadRepository<TEntity> where TEntity : class
     {
 

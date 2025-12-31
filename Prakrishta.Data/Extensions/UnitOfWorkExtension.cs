@@ -27,6 +27,7 @@ namespace Prakrishta.Data.Extensions
         {
             services.AddScoped<IUnitOfWork, UnitOfWork<TContext>>();
             services.AddScoped<IUnitOfWork<TContext>, UnitOfWork<TContext>>();
+            services.AddScoped<IUnitOfWorkV2<TContext>, UnitOfWorkV2<TContext>>();
         }
     }
 }

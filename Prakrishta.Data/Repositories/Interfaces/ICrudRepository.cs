@@ -7,11 +7,14 @@
 // <summary>Contract that defines CRUD operations</summary>
 //-----------------------------------------------------------------------------------
 
+using System;
+
 namespace Prakrishta.Data.Repositories.Interfaces
 {
     /// <summary>
     /// CRUD repository interface
     /// </summary>
+    [Obsolete]
     public interface ICrudRepository<TEntity> : ICudRepository<TEntity>, IReadRepository<TEntity> 
         where TEntity : class
     {
