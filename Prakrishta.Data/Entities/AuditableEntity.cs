@@ -25,7 +25,7 @@ namespace Prakrishta.Data.Entities
         /// <summary>
         /// Gets or sets CreatedBy
         /// </summary>
-        public string CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets Created Date
@@ -35,7 +35,7 @@ namespace Prakrishta.Data.Entities
         /// <summary>
         /// Gets or sets Modified by
         /// </summary>
-        public string ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets ModifiedDate

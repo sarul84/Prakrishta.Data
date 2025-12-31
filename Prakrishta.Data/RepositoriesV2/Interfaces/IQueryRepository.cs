@@ -45,7 +45,7 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// scenarios; otherwise, false.</param>
         /// <returns>An enumerable collection of TEntity objects that match the specified criteria. The collection may be empty
         /// if no entities are found.</returns>
-        IEnumerable<TEntity> GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null,
+        IEnumerable<TEntity> GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null, int? skip = null,
             int? take = null, bool asNoTracking = false);
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="cancellationToken">A token to monitor for cancellation requests. The default value is None.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of
         /// entities matching the specified criteria. The collection will be empty if no entities are found.</returns>
-        Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null,
+        Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null,
             int? skip = null, int? take = null, bool asNoTracking = false, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -86,8 +86,8 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// performance for read-only operations.</param>
         /// <returns>An enumerable collection of entities that satisfy the specified criteria. The collection may be empty if no
         /// entities match.</returns>
-        IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false);
+        IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            string? includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false);
 
         /// <summary>
         /// Asynchronously retrieves a collection of entities that match the specified criteria, with optional
@@ -107,8 +107,8 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="cancellationToken">A token to monitor for cancellation requests. The operation is canceled if the token is triggered.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of
         /// entities that match the specified criteria. The collection is empty if no entities are found.</returns>
-        Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false,
+        Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            string? includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="asNoTracking">true to return the entity without tracking it in the context; otherwise, false. Use true for read-only
         /// operations to improve performance.</param>
         /// <returns>The first entity that matches the filter criteria, or null if no such entity is found.</returns>
-        TEntity GetOne(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null, bool asNoTracking = false);
+        TEntity? GetOne(Expression<Func<TEntity, bool>>? filter = null, string? includeProperties = null, bool asNoTracking = false);
 
         /// <summary>
         /// Asynchronously retrieves a single entity that matches the specified filter criteria.
@@ -140,7 +140,7 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="cancellationToken">A token to monitor for cancellation requests. The default value is None.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the first entity that matches
         /// the filter, or null if no entity is found.</returns>
-        Task<TEntity> GetOneAsync(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null,
+        Task<TEntity?> GetOneAsync(Expression<Func<TEntity, bool>>? filter = null, string? includeProperties = null,
             bool asNoTracking = false, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -157,8 +157,8 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="asNoTracking">true to disable change tracking for the returned entity; otherwise, false. Disabling tracking can improve
         /// performance for read-only operations.</param>
         /// <returns>The first entity that matches the specified criteria, or null if no such entity is found.</returns>
-        TEntity GetFirst(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = null, bool asNoTracking = false);
+        TEntity? GetFirst(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            string? includeProperties = null, bool asNoTracking = false);
 
         /// <summary>
         /// Asynchronously returns the first entity that matches the specified filter, or the first entity in the
@@ -173,15 +173,15 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="cancellationToken">A token to monitor for cancellation requests. The default value is None.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the first entity that matches
         /// the filter, or null if no such entity is found.</returns>
-        Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = null, bool asNoTracking = false, CancellationToken cancellationToken = default);
+        Task<TEntity?> GetFirstAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            string? includeProperties = null, bool asNoTracking = false, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves an entity by its unique identifier.
         /// </summary>
         /// <param name="id">The unique identifier of the entity to retrieve. Cannot be null.</param>
         /// <returns>The entity that matches the specified identifier, or null if no such entity exists.</returns>
-        TEntity GetById(TId id);
+        TEntity? GetById(TId id);
 
         /// <summary>
         /// Asynchronously retrieves an entity by its unique identifier.
@@ -190,7 +190,7 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the entity if found; otherwise,
         /// null.</returns>
-        Task<TEntity> GetByIdAsync(TId id, CancellationToken cancellationToken = default);
+        Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns the number of entities that satisfy the specified filter condition.
@@ -199,7 +199,7 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// of all entities.</param>
         /// <returns>The number of entities that match the filter condition. Returns the total number of entities if <paramref
         /// name="filter"/> is null.</returns>
-        int GetCount(Expression<Func<TEntity, bool>> filter = null);
+        int GetCount(Expression<Func<TEntity, bool>>? filter = null);
 
         /// <summary>
         /// Asynchronously returns the number of entities that satisfy the specified filter condition.
@@ -208,7 +208,7 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the number of entities that
         /// match the filter condition.</returns>
-        Task<int> GetCountAsync(Expression<Func<TEntity, bool>> filter = null, CancellationToken cancellationToken = default);
+        Task<int> GetCountAsync(Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Determines whether any entities exist in the data source that match the specified filter.
@@ -216,7 +216,7 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="filter">An expression used to filter the entities to check for existence. If null, the method checks for the
         /// existence of any entities.</param>
         /// <returns>true if at least one entity matches the filter; otherwise, false.</returns>
-        bool GetExists(Expression<Func<TEntity, bool>> filter = null);
+        bool GetExists(Expression<Func<TEntity, bool>>? filter = null);
 
         /// <summary>
         /// Asynchronously determines whether any entities exist that match the specified filter criteria.
@@ -226,6 +226,6 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains <see langword="true"/> if at
         /// least one entity matches the filter; otherwise, <see langword="false"/>.</returns>
-        Task<bool> GetExistsAsync(Expression<Func<TEntity, bool>> filter = null, CancellationToken cancellationToken = default);
+        Task<bool> GetExistsAsync(Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default);
     }
 }

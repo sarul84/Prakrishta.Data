@@ -26,9 +26,9 @@ namespace Prakrishta.Data.Sample
 
             var domainUsers = new Collection<DomainModel.User>();
 
-            using (IUnitOfWork unitOfWork = new UnitOfWork<DatabaseContext>(databaseContext))
+            using (var unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext))
             {
-                var repository = unitOfWork.GetReadRepository<User>();
+                var repository = unitOfWork.GetQueryRepository<User, Guid>();
 
                 var users = repository.GetAll();
 
@@ -42,9 +42,9 @@ namespace Prakrishta.Data.Sample
                         Password = user.Password,
                         IsActive = user.IsActive,
                         CreatedBy = user.CreatedBy,
-                        CreatedDate = user.CreatedDate,
+                        CreatedOn = user.CreatedOn,
                         ModifiedBy = user.ModifiedBy,
-                        ModifiedDate = user.ModifiedDate,
+                        ModifiedOn = user.ModifiedOn,
                         UserName = user.UserName
                     };
                     domainUsers.Add(domainUser);
@@ -58,7 +58,7 @@ namespace Prakrishta.Data.Sample
             foreach (var user in domainUsers)
             {
                 Console.WriteLine($"User Name: {user.FirstName} {user.LastName}");
-                Console.WriteLine($"Modified Date: {user.ModifiedDate}");
+                Console.WriteLine($"Modified Date: {user.ModifiedOn}");
                 Console.WriteLine($"Modified By: {user.ModifiedBy}");
             }
 
@@ -66,9 +66,9 @@ namespace Prakrishta.Data.Sample
             foreach (var user in domainUsers)
             {
                 user.ModifiedBy = string.Empty;
-                user.ModifiedDate = DateTime.UtcNow;
+                user.ModifiedOn = DateTime.UtcNow;
                 Console.WriteLine($"User Full Name: {user.FirstName} {user.LastName}");
-                Console.WriteLine($"Modified Date: {user.ModifiedDate}");
+                Console.WriteLine($"Modified Date: {user.ModifiedOn}");
                 Console.WriteLine($"Modified By: {user.ModifiedBy}");
             }
 
@@ -83,19 +83,19 @@ namespace Prakrishta.Data.Sample
                     Password = user.Password,
                     IsActive = user.IsActive,
                     CreatedBy = user.CreatedBy,
-                    CreatedDate = user.CreatedDate,
+                    CreatedOn = user.CreatedOn,
                     ModifiedBy = user.ModifiedBy,
-                    ModifiedDate = user.ModifiedDate,
+                    ModifiedOn = user.ModifiedOn,
                     UserName = user.UserName
                 };
                 dusers.Add(duser);
             }
 
             databaseContext = new DatabaseContext();
-            using (IUnitOfWork unitOfWork = new UnitOfWork<DatabaseContext>(databaseContext))
+            using (var unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext))
             {
-                unitOfWork.GetCrudRepository<User>().Update(dusers);
-                unitOfWork.SaveChanges();
+                unitOfWork.GetPersistenceRepository<User, Guid>().Update(dusers);
+                unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
                 Console.WriteLine(Environment.NewLine + "Records updated successfully");
             }
         }
@@ -110,8 +110,8 @@ namespace Prakrishta.Data.Sample
             DatabaseContext databaseContext = new DatabaseContext();
 
             var domainUsers = new Collection<DomainModel.User>();
-            IUnitOfWork unitOfWork = new UnitOfWork<DatabaseContext>(databaseContext);
-            var repository = unitOfWork.GetReadRepository<User>();
+            IUnitOfWorkV2<DatabaseContext> unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext);
+            var repository = unitOfWork.GetQueryRepository<User,Guid>();
 
             var users = repository.GetAll(asNoTracking: true);
 
@@ -125,9 +125,9 @@ namespace Prakrishta.Data.Sample
                     Password = user.Password,
                     IsActive = user.IsActive,
                     CreatedBy = user.CreatedBy,
-                    CreatedDate = user.CreatedDate,
+                    CreatedOn = user.CreatedOn,
                     ModifiedBy = user.ModifiedBy,
-                    ModifiedDate = user.ModifiedDate,
+                    ModifiedOn = user.ModifiedOn,
                     UserName = user.UserName
                 };
                 domainUsers.Add(domainUser);
@@ -137,7 +137,7 @@ namespace Prakrishta.Data.Sample
             foreach (var user in domainUsers)
             {
                 Console.WriteLine($"User Name: {user.FirstName} {user.LastName}");
-                Console.WriteLine($"Modified Date: {user.ModifiedDate}");
+                Console.WriteLine($"Modified Date: {user.ModifiedOn}");
                 Console.WriteLine($"Modified By: {user.ModifiedBy}");
             }
 
@@ -145,9 +145,9 @@ namespace Prakrishta.Data.Sample
             foreach (var user in domainUsers)
             {
                 user.ModifiedBy = "Disconnected";
-                user.ModifiedDate = DateTime.UtcNow;
+                user.ModifiedOn = DateTime.UtcNow;
                 Console.WriteLine($"User Full Name: {user.FirstName} {user.LastName}");
-                Console.WriteLine($"Modified Date: {user.ModifiedDate}");
+                Console.WriteLine($"Modified Date: {user.ModifiedOn}");
                 Console.WriteLine($"Modified By: {user.ModifiedBy}");
             }
 
@@ -162,16 +162,16 @@ namespace Prakrishta.Data.Sample
                     Password = user.Password,
                     IsActive = user.IsActive,
                     CreatedBy = user.CreatedBy,
-                    CreatedDate = user.CreatedDate,
+                    CreatedOn = user.CreatedOn,
                     ModifiedBy = user.ModifiedBy,
-                    ModifiedDate = user.ModifiedDate,
+                    ModifiedOn = user.ModifiedOn,
                     UserName = user.UserName
                 };
                 dusers.Add(duser);
             }
 
-            unitOfWork.GetCrudRepository<User>().Update(dusers);
-            unitOfWork.SaveChanges();
+            unitOfWork.GetPersistenceRepository<User, Guid>().Update(dusers);
+            unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
             Console.WriteLine(Environment.NewLine + "Records updated successfully");
         }
     }

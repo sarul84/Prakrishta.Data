@@ -31,26 +31,26 @@ namespace Prakrishta.Data.Entities.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        string ModifiedBy { get; set; }
+        string? ModifiedBy { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        DateTimeOffset ModifiedOn { get; set; }
+        DateTimeOffset? ModifiedOn { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        string DeletedBy { get; set; }
+        string? DeletedBy { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        DateTimeOffset DeletedOn { get; set; }
+        DateTimeOffset? DeletedOn { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        bool IsDeleted { get; set; }
+        bool? IsDeleted { get; set; }
     }
 }

@@ -9,23 +9,24 @@
 
 namespace Prakrishta.Data.Sample
 {
-    using Prakrishta.Data.Entities;
+    using Prakrishta.Data.Entities.Interfaces;
     using System;
 
     /// <summary>
     /// User EF entity
     /// </summary>
-    public class User : AuditableEntity<Guid>
+    public class User : IAuditableBaseEntity<Guid>
     {
+        public Guid Id { get; set; }
         /// <summary>
         /// Gets or sets User Name
         /// </summary>
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
 
         /// <summary>
         /// Gets or sets Password
         /// </summary>
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
         /// <summary>
         /// Gets or sets isactive flag
@@ -35,11 +36,20 @@ namespace Prakrishta.Data.Sample
         /// <summary>
         /// Gets or sets user first name
         /// </summary>
-        public string FirstName { get; set; }
+        public required string FirstName { get; set; }
 
         /// <summary>
         /// Gets or sets user last name
         /// </summary>
-        public string LastName { get; set; }
+        public required string LastName { get; set; }
+
+        public required string CreatedBy { get; set; }
+
+        public DateTimeOffset CreatedOn { get; set; }
+        public string? ModifiedBy { get; set; }
+        public DateTimeOffset? ModifiedOn { get; set; }
+        public string? DeletedBy { get; set; }
+        public DateTimeOffset? DeletedOn { get; set; }
+        public bool? IsDeleted { get; set; }
     }
 }

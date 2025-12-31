@@ -30,23 +30,23 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         , IQueryRepository<TEntity, TId> where TEntity : class, IAuditableBaseEntity<TId>
     {
         /// <inheritdoc />
-        public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false)
+        public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>>? filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            string? includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false)
         {
             return [.. this.GetQueryable(filter, orderBy, includeProperties, skip, take, asNoTracking)];
         }
 
         /// <inheritdoc />
-        public virtual IEnumerable<TEntity> GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false)
+        public virtual IEnumerable<TEntity> GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            string? includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false)
         {
             return [.. this.GetQueryable(null, orderBy, includeProperties, skip, take, asNoTracking)];
         }
 
         /// <inheritdoc />
-        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false,
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            string? includeProperties = null, int? skip = null, int? take = null, bool asNoTracking = false,
             CancellationToken cancellationToken = default)
         {
             return await this.GetQueryable(null, orderBy, includeProperties, skip, take, asNoTracking)
@@ -55,8 +55,8 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         }
 
         /// <inheritdoc />
-        public virtual async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>,
-            IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, int? skip = null,
+        public virtual async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>,
+            IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null, int? skip = null,
             int? take = null, bool asNoTracking = false, CancellationToken cancellationToken = default)
         {
             return await this.GetQueryable(filter, orderBy, includeProperties, skip, take, asNoTracking)
@@ -65,13 +65,13 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         }
 
         /// <inheritdoc />
-        public TEntity GetById(TId id)
+        public TEntity? GetById(TId id)
         {
             return this.DbSet.Find(id);
         }
 
         /// <inheritdoc />
-        public async Task<TEntity> GetByIdAsync(TId id, CancellationToken cancellationToken = default)
+        public async Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken = default)
         {
             return await this.DbSet
                 .FindAsync(id, cancellationToken)
@@ -79,13 +79,13 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         }
 
         /// <inheritdoc />
-        public int GetCount(Expression<Func<TEntity, bool>> filter = null)
+        public int GetCount(Expression<Func<TEntity, bool>>? filter = null)
         {
             return GetQueryable(filter).Count();
         }
 
         /// <inheritdoc />
-        public async Task<int> GetCountAsync(Expression<Func<TEntity, bool>> filter = null, CancellationToken cancellationToken = default)
+        public async Task<int> GetCountAsync(Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default)
         {
             return await this.GetQueryable(filter)
                 .CountAsync(cancellationToken)
@@ -93,13 +93,13 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         }
 
         /// <inheritdoc />
-        public bool GetExists(Expression<Func<TEntity, bool>> filter = null)
+        public bool GetExists(Expression<Func<TEntity, bool>>? filter = null)
         {
             return this.GetQueryable(filter).Any();
         }
 
         /// <inheritdoc />
-        public async Task<bool> GetExistsAsync(Expression<Func<TEntity, bool>> filter = null, CancellationToken cancellationToken = default)
+        public async Task<bool> GetExistsAsync(Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default)
         {
             return await this.GetQueryable(filter)
                 .AnyAsync(cancellationToken)
@@ -107,16 +107,16 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         }
 
         /// <inheritdoc />
-        public TEntity GetFirst(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>,
-            IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, bool asNoTracking = false)
+        public TEntity? GetFirst(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>,
+            IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null, bool asNoTracking = false)
         {
             return this.GetQueryable(filter, orderBy, includeProperties, asNoTracking: asNoTracking)
                 .FirstOrDefault();
         }
 
         /// <inheritdoc />
-        public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>,
-            IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = null, bool asNoTracking = false,
+        public async Task<TEntity?> GetFirstAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>,
+            IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null, bool asNoTracking = false,
             CancellationToken cancellationToken = default)
         {
             return await this.GetQueryable(filter, orderBy, includeProperties, asNoTracking: asNoTracking)
@@ -125,7 +125,7 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         }
 
         /// <inheritdoc />
-        public TEntity GetOne(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null,
+        public TEntity? GetOne(Expression<Func<TEntity, bool>>? filter = null, string? includeProperties = null,
             bool asNoTracking = false)
         {
             return this.GetQueryable(filter, includeProperties: includeProperties, asNoTracking: asNoTracking)
@@ -133,7 +133,7 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         }
 
         /// <inheritdoc />        
-        public async Task<TEntity> GetOneAsync(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null,
+        public async Task<TEntity?> GetOneAsync(Expression<Func<TEntity, bool>>? filter = null, string? includeProperties = null,
             bool asNoTracking = false, CancellationToken cancellationToken = default)
         {
             return await this.GetQueryable(filter, includeProperties: includeProperties, asNoTracking: asNoTracking)

@@ -50,9 +50,9 @@ namespace Prakrishta.Data.Repositories
         /// <param name="take">The number of records required</param>
         /// <param name="asNoTracking">True if table tracking required</param>
         /// <returns>IQueryable entity</returns>
-        protected IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = null, int? skip = null, int? take = null,
+        protected IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>>? filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            string? includeProperties = null, int? skip = null, int? take = null,
             bool asNoTracking = false)
         {
             includeProperties ??= string.Empty;
