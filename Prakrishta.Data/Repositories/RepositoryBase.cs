@@ -11,6 +11,7 @@ namespace Prakrishta.Data.Repositories
 {
     using Microsoft.EntityFrameworkCore;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -82,6 +83,61 @@ namespace Prakrishta.Data.Repositories
             if (take.HasValue)
             {
                 query = query.Take(take.Value);
+            }
+
+            if (asNoTracking)
+            {
+                return query.AsNoTracking<TEntity>();
+            }
+
+            return query;
+        }
+
+        /// <summary>
+        /// Creates an <see cref="IQueryable{TEntity}"/> that applies optional filtering, ordering, eager loading of
+        /// related entities, paging, and tracking behavior to the underlying data set.
+        /// </summary>
+        /// <remarks>This method is typically used to build flexible queries against the underlying data
+        /// set, allowing for composition of filters, ordering, eager loading, and paging in a single call. When
+        /// <paramref name="asNoTracking"/> is set to <see langword="true"/>, the returned entities are not tracked by
+        /// the context, which can improve performance for read-only scenarios.</remarks>
+        /// <param name="filter">An expression used to filter the entities. Only entities matching the predicate will be included in the
+        /// result. If null, no filtering is applied.</param>
+        /// <param name="orderBy">A function to order the resulting entities. If null, the default ordering is used.</param>
+        /// <param name="includeProperties">A list of expressions specifying related entities to include in the query results for eager loading. If null
+        /// or empty, no related entities are included.</param>
+        /// <param name="pageNumber">The page number for paginated results. Must be greater than 0 if specified. If null, no paging is applied.</param>
+        /// <param name="pageSize">The number of entities to include in each page. Must be greater than 0 if specified. If null, no paging is
+        /// applied.</param>
+        /// <param name="asNoTracking">true to return entities without tracking changes in the context; otherwise, false.</param>
+        /// <returns>An <see cref="IQueryable{TEntity}"/> representing the query with the specified options applied. The query is
+        /// not executed until enumerated.</returns>
+        protected IQueryable<TEntity> EvaluateQuery(Expression<Func<TEntity, bool>>? filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+            List<Expression<Func<TEntity, object>>>? includeProperties = null, int? pageNumber = null, int? pageSize = null,
+            bool asNoTracking = false)
+        {
+            IQueryable<TEntity> query = this.DbSet;
+
+            foreach (var include in includeProperties ?? Enumerable.Empty<Expression<Func<TEntity, object>>>())
+            {
+                query = query.Include(include);
+            }
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                var skip = (pageNumber.Value - 1) * pageSize.Value;
+                query = query.Skip(skip).Take(pageSize.Value);
             }
 
             if (asNoTracking)

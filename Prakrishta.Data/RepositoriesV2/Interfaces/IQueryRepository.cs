@@ -10,6 +10,7 @@
 namespace Prakrishta.Data.RepositoriesV2.Interfaces
 {
     using Prakrishta.Data.Entities.Interfaces;
+    using Prakrishta.Data.Specifications;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -227,5 +228,23 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <returns>A task that represents the asynchronous operation. The task result contains <see langword="true"/> if at
         /// least one entity matches the filter; otherwise, <see langword="false"/>.</returns>
         Task<bool> GetExistsAsync(Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously retrieves all entities that satisfy the specified criteria.
+        /// </summary>
+        /// <param name="specification">The specification that defines the criteria used to filter the entities to retrieve. Cannot be null.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a read-only list of entities
+        /// that match the specification. The list will be empty if no entities are found.</returns>
+        Task<IReadOnlyList<TEntity?>> GetAllAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously retrieves the first entity that matches the specified criteria.
+        /// </summary>
+        /// <param name="specification">The specification that defines the criteria used to filter entities. Cannot be null.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the first entity that matches
+        /// the specification, or null if no such entity is found.</returns>
+        Task<TEntity?> GetFirstAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken);
     }
 }

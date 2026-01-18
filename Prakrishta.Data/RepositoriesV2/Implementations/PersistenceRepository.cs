@@ -52,26 +52,31 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         public virtual void Delete(TId id)
         {
             var typeInfo = typeof(TEntity).GetTypeInfo();
-            var key = DbContext.Model.FindEntityType(typeInfo)
-                                     .FindPrimaryKey()
-                                     .Properties
-                                     .FirstOrDefault();
-
-            var property = typeInfo.GetProperty(key?.Name);
-
-            if (property != null)
+            var entityType = DbContext.Model.FindEntityType(typeInfo);
+            if (entityType != null)
             {
-                var entity = Activator.CreateInstance<TEntity>();
-                property.SetValue(entity, id);
-                DbContext.Entry(entity).State = EntityState.Deleted;
-            }
-            else
-            {
-                var entity = DbSet.Find(id);
-                if (entity != null)
+                // CA1826: Do not use Enumerable methods on indexable collections. Instead use the collection directly.
+                // entityType.FindPrimaryKey().Properties is IReadOnlyList<IProperty>, so use [0] instead of FirstOrDefault()
+                var primaryKey = entityType.FindPrimaryKey();
+                if (primaryKey != null && primaryKey.Properties.Any())
                 {
-                    Delete(entity);
+                    var key = primaryKey.Properties[0];
+                    var property = typeInfo.GetProperty(key.Name);
+
+                    if (property != null)
+                    {
+                        var entity = Activator.CreateInstance<TEntity>();
+                        property.SetValue(entity, id);
+                        DbContext.Entry(entity).State = EntityState.Deleted;
+                        return;
+                    }
                 }
+            }
+
+            var entityFound = DbSet.Find(id);
+            if (entityFound != null)
+            {
+                Delete(entityFound);
             }
         }
 

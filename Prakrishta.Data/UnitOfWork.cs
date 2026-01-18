@@ -142,7 +142,7 @@ namespace Prakrishta.Data
         public void Dispose() => Context?.Dispose();
 
         /// <inheritdoc />
-        public IPersistenceRepository<TEntity, TId> GetPersistenceRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>
+        public IPersistenceRepository<TEntity, TId>? GetPersistenceRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>
         {
             this.repositories ??= new ConcurrentDictionary<string, object>();
 
@@ -156,7 +156,7 @@ namespace Prakrishta.Data
         }
 
         /// <inheritdoc />
-        public IQueryRepository<TEntity, TId> GetQueryRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>
+        public IQueryRepository<TEntity, TId>? GetQueryRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>
         {
             this.repositories ??= new ConcurrentDictionary<string, object>();
 

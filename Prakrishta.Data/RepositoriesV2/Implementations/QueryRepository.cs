@@ -13,6 +13,7 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
     using Prakrishta.Data.Entities.Interfaces;
     using Prakrishta.Data.Repositories;
     using Prakrishta.Data.RepositoriesV2.Interfaces;
+    using Prakrishta.Data.Specifications;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -52,6 +53,14 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
             return await this.GetQueryable(null, orderBy, includeProperties, skip, take, asNoTracking)
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public async Task<IReadOnlyList<TEntity?>> GetAllAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+        {
+            var query = SpecificationExecutor.EvaluateQuery<TEntity>(this.DbSet.AsQueryable(), specification);
+            return await query.ToListAsync(cancellationToken);
+
         }
 
         /// <inheritdoc />
@@ -122,6 +131,13 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
             return await this.GetQueryable(filter, orderBy, includeProperties, asNoTracking: asNoTracking)
                 .FirstOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public async Task<TEntity?> GetFirstAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken)
+        {
+            var query = SpecificationExecutor.EvaluateQuery<TEntity>(this.DbSet.AsQueryable(), specification);
+            return await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc />

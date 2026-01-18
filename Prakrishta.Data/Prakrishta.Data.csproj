@@ -4,12 +4,15 @@
     <TargetFramework>net10.0</TargetFramework>
     <Authors>Arul Sengottaiyan</Authors>
     <Company>Prakrishta Technologies</Company>
+	<Version>1.2.0</Version>
+	<AssemblyVersion>1.2.0.0</AssemblyVersion>
     <Description>Generic Repository and Unit of work pattern with EF.Core</Description>
     <PackageProjectUrl>https://github.com/sarul84/Prakrishta.Data</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sarul84/Prakrishta.Data</RepositoryUrl>
     <PackageTags>C#, EF, EFCore, .NetStandard, Repository pattern, Unitofwork, uow</PackageTags>
     <Copyright>Copyright © Prakrishta Technologies 2017</Copyright>
 	<Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +21,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.1" />
+	<None Include="..\README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>

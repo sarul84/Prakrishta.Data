@@ -62,7 +62,7 @@ namespace Prakrishta.Data
         /// <typeparam name="TEntity">Entity type for which repository required<</typeparam>
         /// <typeparam name="TId">Entity key type</typeparam>
         /// <returns>The repository for the type of <typeparamref name="TEntity"/></returns>
-        IQueryRepository<TEntity, TId> GetQueryRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>;
+        IQueryRepository<TEntity, TId>? GetQueryRepository<TEntity, TId>() where TEntity : class, IAuditableBaseEntity<TId>;
 
         /// <summary>
         /// 
@@ -70,7 +70,7 @@ namespace Prakrishta.Data
         /// <typeparam name="TEntity">Entity type for which repository required<</typeparam>
         /// <typeparam name="TId">Entity key type</typeparam>
         /// <returns>The repository for the type of <typeparamref name="TEntity"/></returns>
-        IPersistenceRepository<TEntity, TId> GetPersistenceRepository<TEntity, TId>() where TEntity: class, IAuditableBaseEntity<TId>;
+        IPersistenceRepository<TEntity, TId>? GetPersistenceRepository<TEntity, TId>() where TEntity: class, IAuditableBaseEntity<TId>;
 
         /// <summary>
         /// Save database context changes into database

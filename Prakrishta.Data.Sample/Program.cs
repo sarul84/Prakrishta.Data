@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Prakrishta.Data.Sample
 {
@@ -30,7 +31,7 @@ namespace Prakrishta.Data.Sample
             {
                 var repository = unitOfWork.GetQueryRepository<User, Guid>();
 
-                var users = repository.GetAll();
+                var users = repository?.GetAll() ?? [];
 
                 foreach (var user in users)
                 {
@@ -94,7 +95,7 @@ namespace Prakrishta.Data.Sample
             databaseContext = new DatabaseContext();
             using (var unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext))
             {
-                unitOfWork.GetPersistenceRepository<User, Guid>().Update(dusers);
+                unitOfWork.GetPersistenceRepository<User, Guid>()?.Update(dusers);
                 unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
                 Console.WriteLine(Environment.NewLine + "Records updated successfully");
             }
@@ -113,7 +114,7 @@ namespace Prakrishta.Data.Sample
             IUnitOfWorkV2<DatabaseContext> unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext);
             var repository = unitOfWork.GetQueryRepository<User,Guid>();
 
-            var users = repository.GetAll(asNoTracking: true);
+            var users = repository?.GetAll(asNoTracking: true) ?? [];
 
             foreach (var user in users)
             {
@@ -170,7 +171,7 @@ namespace Prakrishta.Data.Sample
                 dusers.Add(duser);
             }
 
-            unitOfWork.GetPersistenceRepository<User, Guid>().Update(dusers);
+            unitOfWork.GetPersistenceRepository<User, Guid>()?.Update(dusers);
             unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
             Console.WriteLine(Environment.NewLine + "Records updated successfully");
         }
