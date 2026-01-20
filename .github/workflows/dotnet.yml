@@ -29,5 +29,5 @@ jobs:
       run: dotnet test --configuration Release --no-build --verbosity normal
 
     # Optional: Create NuGet package
-    - name: Pack NuGet package
-      run: dotnet pack src/Prakrishta.Data/Prakrishta.Data/Prakrishta.Data/Prakrishta.Data.csproj --configuration Release --output ./artifacts
+    - name: Pack
+      run: dotnet pack ./src/Prakrishta.Data/Prakrishta.Data.csproj -c Release -o ./artifacts
