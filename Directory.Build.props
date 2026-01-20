@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup>
+    <ProjectToPack Include="src/Prakrishta.Data/Prakrishta.Data.csproj" />
+  </ItemGroup>
+</Project>
