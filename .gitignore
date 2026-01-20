@@ -10,3 +10,8 @@
 /Prakrishta.Data/bin
 /Prakrishta.Data.Sample/bin/Release/netcoreapp2.2
 /Prakrishta.Data.Sample/bin/Debug/netcoreapp3.0
+/coverage-report
+/Prakrishta.Data.Sample/bin
+/Prakrishta.Data.UnitTest/bin/Debug/net10.0
+/Prakrishta.Data.UnitTest/obj
+/Prakrishta.Data.UnitTest/TestResults/

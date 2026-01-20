@@ -148,7 +148,8 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
             var type = typeof(TEntity);
 
             var isDeletedProp = type.GetProperty("IsDeleted");
-            if (isDeletedProp != null && isDeletedProp.PropertyType == typeof(bool))
+            if (isDeletedProp != null 
+                && (isDeletedProp.PropertyType == typeof(bool?) || isDeletedProp.PropertyType == typeof(bool)))
             {
                 isDeletedProp.SetValue(entity, true);
             }

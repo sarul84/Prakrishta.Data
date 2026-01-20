@@ -23,6 +23,9 @@
                 query = query.Skip(skip).Take(spec.PageSize.Value);
             }
 
+            if(spec.OrderBy is not null)
+                query = spec.OrderBy(query);
+
             if (spec.AsNoTracking)
                 query = query.AsNoTracking();
 
