@@ -210,8 +210,8 @@ var pagedUsers = repo.GetAsync(
 You can control whether EF Core tracks entities:
 
 ```
-var trackedUsers = repo.GetAll(trackChanges: true);
-var untrackedUsers = repo.GetAll(trackChanges: false);
+var trackedUsers = repo.GetAll(asNoTracking: true);
+var untrackedUsers = repo.GetAll(asNoTracking: false);
 ```
 
 **Specification pattern integration**
