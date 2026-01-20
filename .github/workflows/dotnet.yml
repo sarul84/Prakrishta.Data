@@ -30,4 +30,4 @@ jobs:
 
     # Optional: Create NuGet package
     - name: Pack NuGet package
-      run: dotnet pack src/Prakrishta.Data/Prakrishta.Data/Prakrishta.Data.csproj --configuration Release --output ./artifacts
+      run: dotnet pack src/Prakrishta.Data/Prakrishta.Data/Prakrishta.Data/Prakrishta.Data.csproj --configuration Release --output ./artifacts
