@@ -14,9 +14,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: List repository files
-      run: ls -R .
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -33,4 +30,4 @@ jobs:
 
     # Optional: Create NuGet package
     - name: Pack
-      run: dotnet pack ./src/Prakrishta.Data/Prakrishta.Data.csproj -c Release -o ./artifacts
+      run: dotnet pack Prakrishta.Data/Prakrishta.Data.csproj -c Release -o ./artifacts
