@@ -6,6 +6,12 @@
 - **Generic Query** Repository for read-only operations.
 - **Generic Persistence Repository** for full CRUD operations.
 - **Specification Pattern** for reusable, composable query logic.
+- **Raw SQL Execution** for safe and flexible abstraction for executing raw SQL queries when LINQ or the specification pattern is not sufficient.
+    - Reporting and analytics queries
+    - Complex joins or projections
+    - Stored procedures
+    - Bulk operations
+    - Performance‑critical paths
 - **Support for**:
     - Synchronous and asynchronous methods.
     - Pagination.
@@ -56,9 +62,10 @@ var readRepository = unitOfWork.GetQueryRepository<User, Guid>();
 var persistenceRepository = unitOfWork.GetPersistenceRepository<User, Guid>();
 ```
 
-**Repository types**
+## Repository types
 
-Query repository
+**Query repository**
+
 The **query repository** is optimized for read operations:
 - Get all entities.
 - Filtered queries.
@@ -83,7 +90,7 @@ var usersWithAddress = _uow
     .GetAll("Address");
 ```
 
-****Persistence repository****
+**Persistence repository**
 
 The **persistence repository** supports full CRUD:
 - Add / AddRange
@@ -153,7 +160,7 @@ public ActionResult<IEnumerable<User>> Get()
 }
 ```
 
-**Query capabilities**
+## Query capabilities
 
 **Filtering**
 
@@ -214,7 +221,179 @@ var trackedUsers = repo.GetAll(asNoTracking: true);
 var untrackedUsers = repo.GetAll(asNoTracking: false);
 ```
 
-**Specification pattern integration**
+## ISqlExecutor Overview
+
+`ISqlExecutor` provides three core operations:
+- Execute SQL commands (INSERT, UPDATE, DELETE)
+- Query entities or DTOs
+- Query a single entity or DTO
+
+```
+public interface ISqlExecutor
+{
+    Task<IEnumerable<T>> QueryAsync<T>(
+        string sql,
+        object? parameters = null,
+        CancellationToken cancellationToken = default);
+
+    Task<T?> QuerySingleAsync<T>(
+        string sql,
+        object? parameters = null,
+        CancellationToken cancellationToken = default);
+
+    Task<int> ExecuteAsync(
+        string sql,
+        object? parameters = null,
+        CancellationToken cancellationToken = default);
+}
+```
+
+The interface is non‑generic, and each method is generic. This design allows you to query:
+- EF Core entities
+- DTOs
+- Projections
+- Scalar values (via DTO wrappers)
+
+**EF Core Implementation**
+
+Prakrishta.Data ships with an EF Core–backed implementation
+
+```
+public class EfCoreSqlExecutor : ISqlExecutor
+{
+    private readonly DbContext _context;
+
+    public EfCoreSqlExecutor(DbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<IEnumerable<T>> QueryAsync<T>(
+        string sql,
+        object? parameters = null,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        return await _context.Set<T>()
+            .FromSqlRaw(sql, parameters)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<T?> QuerySingleAsync<T>(
+        string sql,
+        object? parameters = null,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        return await _context.Set<T>()
+            .FromSqlRaw(sql, parameters)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public Task<int> ExecuteAsync(
+        string sql,
+        object? parameters = null,
+        CancellationToken cancellationToken = default)
+    {
+        return _context.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
+    }
+}
+```
+
+**Registering ISqlExecutor**
+
+Add the executor to your DI container
+
+```
+services.AddScoped<ISqlExecutor, EfCoreSqlExecutor>();
+```
+
+**Usage Examples**
+
+1. Querying Entities with Raw SQL
+
+```
+var users = await sqlExecutor.QueryAsync<User>(
+    "SELECT * FROM Users WHERE IsActive = 1"
+);
+```
+
+2. Querying with Parameters (Safe SQL)
+
+```
+var users = await sqlExecutor.QueryAsync<User>(
+    "SELECT * FROM Users WHERE Name = @name",
+    new { name = "John" }
+);
+```
+
+Parameters are automatically parameterized by EF Core, preventing SQL injection.
+
+3. Querying DTOs
+
+```
+public class UserSummaryDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+}
+
+var summaries = await sqlExecutor.QueryAsync<UserSummaryDto>(
+    "SELECT Id, Name FROM Users WHERE IsActive = 1"
+);
+```
+
+DTOs must have property names matching the SQL result set.
+
+4. Querying a Single Row
+
+```
+var user = await sqlExecutor.QuerySingleAsync<User>(
+    "SELECT * FROM Users WHERE Id = @id",
+    new { id = 5 }
+);
+```
+
+Returns null if no row matches.
+
+5. Executing Commands (INSERT, UPDATE, DELETE)
+
+```
+var rows = await sqlExecutor.ExecuteAsync(
+    "UPDATE Users SET IsActive = 0 WHERE LastLogin < @cutoff",
+    new { cutoff = DateTime.UtcNow.AddMonths(-6) }
+);
+```
+
+rows contains the number of affected rows.
+
+6. Stored Procedure Execution
+
+```
+var results = await sqlExecutor.QueryAsync<UserSummaryDto>(
+    "EXEC GetActiveUsers @role",
+    new { role = "Admin" }
+);
+```
+
+Works with SQL Server, PostgreSQL, MySQL, and SQLite (where supported).
+
+**Security Considerations**
+
+Prakrishta.Data encourages safe SQL usage by requiring parameters to be passed separately:
+
+```
+new { name = userInput }
+```
+
+This ensures:
+- Automatic parameterization
+- No string concatenation
+- No SQL injection vulnerabilities
+Consumers should avoid interpolated SQL strings.
+
+
+## Specification pattern integration
 
 To avoid repository method explosion and centralize query logic, Prakrishta.Data supports the Specification Pattern on top of the existing Unit of Work and repositories.
 

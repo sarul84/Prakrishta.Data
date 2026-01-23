@@ -5,7 +5,6 @@
 
     public static class SpecificationExecutor
     {
-        // Add 'where T : class' to ensure T is a reference type for EF Include
         public static IQueryable<T> EvaluateQuery<T>(IQueryable<T> inputQuery,
             ISpecification<T> spec) where T : class
         {

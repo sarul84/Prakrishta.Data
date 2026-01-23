@@ -1,7 +1,4 @@
 ﻿using Prakrishta.Data.Entities.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Prakrishta.Data.UnitTest
 {
@@ -24,5 +21,11 @@ namespace Prakrishta.Data.UnitTest
     {
         public int Id { get; set; }
         public string Value { get; set; } = "";
+    }
+
+    public class User
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

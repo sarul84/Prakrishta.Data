@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Prakrishta.Data.UnitTest
 {
@@ -11,5 +8,6 @@ namespace Prakrishta.Data.UnitTest
             : base(options) { }
 
         public DbSet<TestEntity> TestEntities => Set<TestEntity>();
+        public DbSet<User> Users => Set<User>();
     }
 }
