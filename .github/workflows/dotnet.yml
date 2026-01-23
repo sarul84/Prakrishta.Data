@@ -41,5 +41,5 @@ jobs:
         name: coverage-report
         path: coverage-report
 
-    - name: Pack NuGet package
-      run: dotnet pack src/Prakrishta.Data/Prakrishta.Data.csproj --configuration Release --output ./artifacts
+    - name: Pack
+      run: dotnet pack Prakrishta.Data/Prakrishta.Data.csproj -c Release -o ./artifacts

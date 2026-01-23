@@ -22,7 +22,9 @@
 
 
 Build status:
-[![Build Status](https://dev.azure.com/prakrishta0270/Prakrishta%20Open%20Source/_apis/build/status/sarul84.Prakrishta.Data?branchName=master)](https://dev.azure.com/prakrishta0270/Prakrishta%20Open%20Source/_build/latest?definitionId=2&branchName=master)
+[![Build Status](https://github.com/sarul84/Prakrishta.Data/actions/workflows/dotnet.yml/badge.svg)](https://github.com/sarul84/Prakrishta.Data/actions/workflows/dotnet.yml)
+
+Package version: ![NuGet](https://img.shields.io/nuget/v/Prakrishta.Data)
 
 Package installation:
 
