@@ -6,8 +6,13 @@ on:
   pull_request:
     branches: [ "master" ]
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
-  build:
+  build-and-publish-coverage:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +44,27 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
-        path: coverage-report
+        path: coverage
 
     - name: Pack
       run: dotnet pack Prakrishta.Data/Prakrishta.Data.csproj -c Release -o ./artifacts
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload coverage to GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: coverage
+
+  deploy:
+    needs: build-and-publish-coverage
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
