@@ -20,16 +20,16 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
     {
         private readonly DbContext _context = context;
 
-        </inheritdoc/>
+        /// <inheritdoc />
         public async Task<int> ExecuteAsync(string sql, object? parameters = null, CancellationToken cancellationToken = default)
             => await _context.Database.ExecuteSqlRawAsync(sql, ToDbParams(parameters));
 
-        </inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string sql, object? parameters = null, CancellationToken cancellationToken = default)
             where TEntity : class
             => await _context.Set<TEntity>().FromSqlRaw(sql, ToDbParams(parameters)).ToListAsync(cancellationToken);
 
-        </inheritdoc/>
+        /// <inheritdoc />
         public async Task<TEntity?> QuerySingleAsync<TEntity>(string sql, object? parameters = null, CancellationToken cancellationToken = default)
             where TEntity : class
             => await _context.Set<TEntity>().FromSqlRaw(sql, ToDbParams(parameters)).FirstOrDefaultAsync(cancellationToken);
