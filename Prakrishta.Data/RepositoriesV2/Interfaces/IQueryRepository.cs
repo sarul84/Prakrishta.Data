@@ -246,5 +246,15 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// <returns>A task that represents the asynchronous operation. The task result contains the first entity that matches
         /// the specification, or null if no such entity is found.</returns>
         Task<TEntity?> GetFirstAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Asynchronously evaluates the specified specification against the current entity and returns the result.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result produced by the specification evaluation.</typeparam>
+        /// <param name="specification">The specification to evaluate. Defines the criteria and projection for the evaluation. Cannot be null.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the value produced by evaluating
+        /// the specification.</returns>
+        Task<TResult?> EvaluateAsync<TResult>(ISpecification<TEntity, TResult> specification, CancellationToken cancellationToken1);
     }
 }

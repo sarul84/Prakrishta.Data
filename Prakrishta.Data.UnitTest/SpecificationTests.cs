@@ -143,5 +143,28 @@ namespace Prakrishta.Data.UnitTest
             Assert.Equal(new[] { 1, 2, 3 }, result.Select(x => x.Id).ToArray());
         }
 
+        [Fact]
+        public async Task EvaluateAsync_ReturnsCorrectCount_ForAggregationSpec()
+        {
+            // Arrange
+            var context = CreateContext();
+
+            context.TestEntities.AddRange(
+                new TestEntity { Id = 1, IsDeleted = false },
+                new TestEntity { Id = 2, IsDeleted = true },
+                new TestEntity { Id = 3, IsDeleted = false});
+
+            context.SaveChanges();
+
+            var repo = new QueryRepository<TestEntity, int>(context);
+            var spec = new ActiveTestCountSpec();
+
+            // Act
+            var result = await repo.EvaluateAsync(spec, CancellationToken.None);
+
+            // Assert
+            Assert.Equal(2, result);
+        }
+
     }
 }

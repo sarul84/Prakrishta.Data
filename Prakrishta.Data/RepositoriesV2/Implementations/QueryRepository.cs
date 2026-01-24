@@ -156,5 +156,11 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         }
+
+        /// <inheritdoc />  
+        public async Task<TResult?> EvaluateAsync<TResult>(ISpecification<TEntity, TResult> specification, CancellationToken cancellationToken)
+        {
+            return await SpecificationExecutor.EvaluateQuery(DbSet, specification, cancellationToken);
+        }
     }
 }

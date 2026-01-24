@@ -633,6 +633,49 @@ var user = await _uow
     .FirstOrDefaultAsync(spec);
 ```
 
+**Aggregates and projections**
+
+```
+public sealed class ActiveUsersCountSpec 
+    : IResultSpecification<User, int>
+{
+    public Expression<Func<User, bool>>? Criteria => u => u.IsActive;
+    public IList<Expression<Func<User, object>>>? IncludeProperties => null;
+    public Func<IQueryable<User>, IOrderedQueryable<User>>? OrderBy => null;
+    public int? PageNumber => null;
+    public int? PageSize => null;
+    public bool AsNoTracking => true;
+
+    public Func<IQueryable<User>, IQueryable<int>>? Projection => null;
+
+    public Func<IQueryable<User>, Task<int>> Aggregation =>
+        q => q.CountAsync();
+}
+```
+
+Usage:
+
+```
+var count = await uow.Repository<User>().EvaluateAsync(new ActiveUsersCountSpec());
+```
+
+**DTO projection**
+```
+public sealed class UserSummarySpec 
+    : IResultSpecification<User, UserSummaryDto>
+{
+    public Func<IQueryable<User>, IQueryable<UserSummaryDto>> Projection =>
+        q => q.Select(u => new UserSummaryDto(u.Id, u.Name));
+
+    public Func<IQueryable<User>, Task<UserSummaryDto>>? Aggregation => null;
+}
+```
+Usage:
+
+```
+var dto = await repo.EvaluateAsync(new UserSummarySpec());
+```
+
 **Putting it all together**
 
 With **Prakrishta.Data**, your data access story becomes:

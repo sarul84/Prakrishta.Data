@@ -1,9 +1,10 @@
-﻿using Prakrishta.Data.Specifications;
+﻿using Microsoft.EntityFrameworkCore;
+using Prakrishta.Data.Specifications;
 using System.Linq.Expressions;
 
 namespace Prakrishta.Data.UnitTest
 {
-    public class TestSpecification : Specification<TestEntity>
+    public sealed class TestSpecification : Specification<TestEntity>
     {
         public TestSpecification(Expression<Func<TestEntity, bool>>? criteria)
         {
@@ -22,5 +23,23 @@ namespace Prakrishta.Data.UnitTest
         public void TrackChangesPublic()
             => TrackChanges();
     }
+
+    public sealed class ActiveTestCountSpec : ISpecification<TestEntity, int>
+    {
+        public Expression<Func<TestEntity, bool>>? Criteria => u => u.IsDeleted == false;
+        public IList<Expression<Func<TestEntity, object>>>? IncludeProperties => null;
+        public Func<IQueryable<TestEntity>, IOrderedQueryable<TestEntity>>? OrderBy => null;
+        public int? PageNumber => null;
+        public int? PageSize => null;
+        public bool AsNoTracking => true;
+
+        public bool IsPagingEnabled => false;
+
+        public Func<IQueryable<TestEntity>, IQueryable<int>>? Projection => null;
+
+        public Func<IQueryable<TestEntity>, Task<int>> Aggregation =>
+            q => q.CountAsync();
+    }
+
 
 }
