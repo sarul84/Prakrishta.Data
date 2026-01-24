@@ -44,7 +44,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
-        path: coverage
+        path: coverage-report
 
     - name: Pack
       run: dotnet pack Prakrishta.Data/Prakrishta.Data.csproj -c Release -o ./artifacts
@@ -55,7 +55,7 @@ jobs:
     - name: Upload coverage to GitHub Pages
       uses: actions/upload-pages-artifact@v3
       with:
-        path: coverage
+        path: coverage-report
 
   deploy:
     needs: build-and-publish-coverage
