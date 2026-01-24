@@ -6,18 +6,18 @@
 - **Generic Query** Repository for read-only operations.
 - **Generic Persistence Repository** for full CRUD operations.
 - **Specification Pattern** for reusable, composable query logic.
-- **Raw SQL Execution** for safe and flexible abstraction for executing raw SQL queries when LINQ or the specification pattern is not sufficient.
-    - Reporting and analytics queries
-    - Complex joins or projections
-    - Stored procedures
-    - Bulk operations
-    - Performance‑critical paths
 - **Support for**:
     - Synchronous and asynchronous methods.
     - Pagination.
     - Sorting.
     - Change tracking control.
     - Eager loading via Include expressions or string paths.
+- **Raw SQL Execution** for safe and flexible abstraction for executing raw SQL queries when LINQ or the specification pattern is not sufficient.
+    - Reporting and analytics queries
+    - Complex joins or projections
+    - Stored procedures
+    - Bulk operations
+    - Performance‑critical paths
 - First-class DI integration with .NET Core.
 
 
@@ -244,6 +244,10 @@ public interface ISqlExecutor
         CancellationToken cancellationToken = default);
 
     Task<int> ExecuteAsync(
+        FormattableString sql,
+        CancellationToken cancellationToken = default);
+
+    Task<int> ExecuteRawAsync(
         string sql,
         object? parameters = null,
         CancellationToken cancellationToken = default);
@@ -255,50 +259,57 @@ The interface is non‑generic, and each method is generic. This design allows y
 - DTOs
 - Projections
 - Scalar values (via DTO wrappers)
+- Stored procedure results
+
+**Unit of Work Integration**
+
+Raw SQL execution is available directly through the Unit of Work:
+```
+public interface IUnitOfWork
+{
+    IRepository<TEntity> Repository<TEntity>() where TEntity : class;
+
+    ISqlExecutor Sql { get; }
+
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+}
+```
+
+This design ensures:
+- A single DbContext instance
+- Shared transactions
+- Cleaner DI usage
+- A unified data access API
+
 
 **EF Core Implementation**
 
 Prakrishta.Data ships with an EF Core–backed implementation
 
 ```
-public class EfCoreSqlExecutor : ISqlExecutor
+public class EfCoreSqlExecutor(DbContext context) : ISqlExecutor
 {
-    private readonly DbContext _context;
+    private readonly DbContext _context = context;
 
-    public EfCoreSqlExecutor(DbContext context)
-    {
-        _context = context;
-    }
+    /// <inheritdoc />
+    public async Task<int> ExecuteAsync(FormattableString sql, CancellationToken cancellationToken = default)
+        => await _context.Database.ExecuteSqlInterpolatedAsync(sql, cancellationToken);
 
-    public async Task<IEnumerable<T>> QueryAsync<T>(
-        string sql,
-        object? parameters = null,
-        CancellationToken cancellationToken = default)
-        where T : class
-    {
-        return await _context.Set<T>()
-            .FromSqlRaw(sql, parameters)
-            .ToListAsync(cancellationToken);
-    }
+    /// <inheritdoc />
+    public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string sql, object? parameters = null, CancellationToken cancellationToken = default)
+        where TEntity : class
+        => await _context.Set<TEntity>().FromSqlRaw(sql, ToDbParams(parameters)).ToListAsync(cancellationToken);
 
-    public async Task<T?> QuerySingleAsync<T>(
-        string sql,
-        object? parameters = null,
-        CancellationToken cancellationToken = default)
-        where T : class
-    {
-        return await _context.Set<T>()
-            .FromSqlRaw(sql, parameters)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
+    /// <inheritdoc />
+    public async Task<TEntity?> QuerySingleAsync<TEntity>(string sql, object? parameters = null, CancellationToken cancellationToken = default)
+        where TEntity : class
+        => await _context.Set<TEntity>().FromSqlRaw(sql, ToDbParams(parameters)).FirstOrDefaultAsync(cancellationToken);
 
-    public Task<int> ExecuteAsync(
-        string sql,
-        object? parameters = null,
-        CancellationToken cancellationToken = default)
-    {
-        return _context.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
-    }
+    public Task<int> ExecuteRawAsync(string sql, object? parameters = null, CancellationToken cancellationToken = default)
+        =>   _context.Database.ExecuteSqlRawAsync(sql, ToDbParams(parameters), cancellationToken);
+
+    private static object[] ToDbParams(object? parameters)
+        => parameters == null ? Array.Empty<object>() : new[] { parameters };
 }
 ```
 
@@ -315,7 +326,7 @@ services.AddScoped<ISqlExecutor, EfCoreSqlExecutor>();
 1. Querying Entities with Raw SQL
 
 ```
-var users = await sqlExecutor.QueryAsync<User>(
+var users = await _uow.Sql.QueryAsync<User>(
     "SELECT * FROM Users WHERE IsActive = 1"
 );
 ```
@@ -323,7 +334,7 @@ var users = await sqlExecutor.QueryAsync<User>(
 2. Querying with Parameters (Safe SQL)
 
 ```
-var users = await sqlExecutor.QueryAsync<User>(
+var users = await _uow.Sql.QueryAsync<User>(
     "SELECT * FROM Users WHERE Name = @name",
     new { name = "John" }
 );
@@ -340,7 +351,7 @@ public class UserSummaryDto
     public string Name { get; set; } = string.Empty;
 }
 
-var summaries = await sqlExecutor.QueryAsync<UserSummaryDto>(
+var summaries = await _uow.Sql.QueryAsync<UserSummaryDto>(
     "SELECT Id, Name FROM Users WHERE IsActive = 1"
 );
 ```
@@ -350,7 +361,7 @@ DTOs must have property names matching the SQL result set.
 4. Querying a Single Row
 
 ```
-var user = await sqlExecutor.QuerySingleAsync<User>(
+var user = await _uow.Sql.QuerySingleAsync<User>(
     "SELECT * FROM Users WHERE Id = @id",
     new { id = 5 }
 );
@@ -361,7 +372,7 @@ Returns null if no row matches.
 5. Executing Commands (INSERT, UPDATE, DELETE)
 
 ```
-var rows = await sqlExecutor.ExecuteAsync(
+var rows = await _uow.Sql.ExecuteAsync(
     "UPDATE Users SET IsActive = 0 WHERE LastLogin < @cutoff",
     new { cutoff = DateTime.UtcNow.AddMonths(-6) }
 );
@@ -372,7 +383,7 @@ rows contains the number of affected rows.
 6. Stored Procedure Execution
 
 ```
-var results = await sqlExecutor.QueryAsync<UserSummaryDto>(
+var results = await _uow.Sql.QueryAsync<UserSummaryDto>(
     "EXEC GetActiveUsers @role",
     new { role = "Admin" }
 );

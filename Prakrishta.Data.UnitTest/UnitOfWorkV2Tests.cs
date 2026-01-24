@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Moq;
 using Prakrishta.Data.RepositoriesV2.Implementations;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Prakrishta.Data.UnitTest
 {
@@ -21,10 +18,58 @@ namespace Prakrishta.Data.UnitTest
         }
 
         [Fact]
+        public void UnitOfWork_ExposesSqlExecutor()
+        {
+            using var context = SqliteInMemoryFactory.CreateContext();
+            var sql = new EfCoreSqlExecutor(context);
+            var uow = new UnitOfWorkV2<TestDbContext>(context, sql);
+
+            Assert.NotNull(uow.Sql);
+        }
+
+        [Fact]
+        public async Task UnitOfWork_SqlAndRepositoryShareContext()
+        {
+            using var context = SqliteInMemoryFactory.CreateContext();
+            var sql = new EfCoreSqlExecutor(context);
+            var uow = new UnitOfWorkV2<TestDbContext>(context, sql);
+
+            var createdOn = DateTimeOffset.UtcNow;
+
+            await uow.Sql.ExecuteAsync(
+                $"INSERT INTO TestEntities (Id, CreatedBy, CreatedOn) VALUES ({1}, {"FromSql"}, {createdOn})"
+            );
+
+            var entity = await uow.GetQueryRepository<TestEntity, int>().GetByIdAsync(1);
+
+            Assert.NotNull(entity);
+            Assert.Equal("FromSql", entity!.CreatedBy);
+            Assert.Equal(createdOn.ToUnixTimeSeconds(), entity.CreatedOn.ToUnixTimeSeconds());
+        }
+
+        [Fact]
+        public async Task UnitOfWork_SqlParticipatesInTransaction()
+        {
+            using var context = SqliteInMemoryFactory.CreateContext();
+            var sql = new EfCoreSqlExecutor(context);
+            var uow = new UnitOfWorkV2<TestDbContext>(context, sql);
+
+            await uow.Sql.ExecuteAsync(
+                $"INSERT INTO Users (Id, Name) VALUES ({1}, {"BeforeCommit"})"
+            );
+
+            await uow.SaveChangesAsync();
+
+            Assert.Equal(1, context.Users.Count());
+        }
+
+        [Fact]
         public void GetQueryRepository_ReturnsSameInstance()
         {
             var context = CreateContext();
-            var uow = new UnitOfWorkV2<TestDbContext>(context);
+            var sql = new EfCoreSqlExecutor(context);
+
+            var uow = new UnitOfWorkV2<TestDbContext>(context, sql);
 
             var repo1 = uow.GetQueryRepository<TestEntity, int>();
             var repo2 = uow.GetQueryRepository<TestEntity, int>();
@@ -36,7 +81,9 @@ namespace Prakrishta.Data.UnitTest
         public async Task SaveChangesAsync_CommitsTransaction()
         {
             var context = CreateContext();
-            var uow = new UnitOfWorkV2<TestDbContext>(context);
+            var sql = new EfCoreSqlExecutor(context);
+
+            var uow = new UnitOfWorkV2<TestDbContext>(context, sql);
 
             context.TestEntities.Add(new TestEntity { Id = 1 });
 
@@ -49,7 +96,9 @@ namespace Prakrishta.Data.UnitTest
         public void GetPersistenceRepository_ReturnsRepository()
         {
             var context = CreateContext();
-            var uow = new UnitOfWorkV2<TestDbContext>(context);
+            var sql = new EfCoreSqlExecutor(context);
+
+            var uow = new UnitOfWorkV2<TestDbContext>(context, sql);
 
             var repo = uow.GetPersistenceRepository<TestEntity, int>();
 
@@ -61,7 +110,9 @@ namespace Prakrishta.Data.UnitTest
         public void GetPersistenceRepository_ReturnsSameInstanceOnSecondCall()
         {
             var context = CreateContext();
-            var uow = new UnitOfWorkV2<TestDbContext>(context);
+            var sql = new EfCoreSqlExecutor(context);
+
+            var uow = new UnitOfWorkV2<TestDbContext>(context, sql);
 
             var repo1 = uow.GetPersistenceRepository<TestEntity, int>();
             var repo2 = uow.GetPersistenceRepository<TestEntity, int>();

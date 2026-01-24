@@ -56,6 +56,12 @@ namespace Prakrishta.Data
     /// </summary>
     public interface IUnitOfWorkV2<TContext> : IDisposable where TContext : DbContext
     {
+
+        /// <summary>
+        /// Get SQL executor to execute raw SQL queries
+        /// </summary>
+        ISqlExecutor Sql { get; }
+
         /// <summary>
         /// Get readonly repository for the given database entity type
         /// </summary>

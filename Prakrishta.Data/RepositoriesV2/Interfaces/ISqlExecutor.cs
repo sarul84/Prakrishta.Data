@@ -9,6 +9,7 @@
 
 namespace Prakrishta.Data.RepositoriesV2.Interfaces
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -22,12 +23,25 @@ namespace Prakrishta.Data.RepositoriesV2.Interfaces
         /// Entity Framework change tracker. Use caution when executing raw SQL to avoid SQL injection
         /// vulnerabilities.</remarks>
         /// <param name="sql">The SQL command to execute. This can be a data definition or data manipulation statement.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the number of rows affected by
+        /// the command.</returns>
+        Task<int> ExecuteAsync(FormattableString sql, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Executes the specified SQL command asynchronously against the database.
+        /// </summary>
+        /// <remarks>The SQL command is executed directly against the database and is not processed by the
+        /// Entity Framework change tracker. Use caution when executing raw SQL to avoid SQL injection
+        /// vulnerabilities.</remarks>
+        /// <param name="sql">The SQL command to execute. This can be a data definition or data manipulation statement.</param>
         /// <param name="parameters">An object containing the parameters to be applied to the SQL command. Can be null if the command does not
         /// require parameters.</param>
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the number of rows affected by
         /// the command.</returns>
-        Task<int> ExecuteAsync(string sql, object? parameters = null, CancellationToken cancellationToken = default);
+        Task<int> ExecuteRawAsync(string sql, object? parameters = null, CancellationToken cancellationToken = default);
+
 
         /// <summary>
         /// Executes the specified SQL query asynchronously and maps the result set to a collection of entities of type

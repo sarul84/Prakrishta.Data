@@ -21,8 +21,8 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
         private readonly DbContext _context = context;
 
         /// <inheritdoc />
-        public async Task<int> ExecuteAsync(string sql, object? parameters = null, CancellationToken cancellationToken = default)
-            => await _context.Database.ExecuteSqlRawAsync(sql, ToDbParams(parameters));
+        public async Task<int> ExecuteAsync(FormattableString sql, CancellationToken cancellationToken = default)
+            => await _context.Database.ExecuteSqlInterpolatedAsync(sql, cancellationToken);
 
         /// <inheritdoc />
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string sql, object? parameters = null, CancellationToken cancellationToken = default)
@@ -34,8 +34,10 @@ namespace Prakrishta.Data.RepositoriesV2.Implementations
             where TEntity : class
             => await _context.Set<TEntity>().FromSqlRaw(sql, ToDbParams(parameters)).FirstOrDefaultAsync(cancellationToken);
 
+        public Task<int> ExecuteRawAsync(string sql, object? parameters = null, CancellationToken cancellationToken = default)
+            =>   _context.Database.ExecuteSqlRawAsync(sql, ToDbParams(parameters), cancellationToken);
+
         private static object[] ToDbParams(object? parameters)
             => parameters == null ? Array.Empty<object>() : new[] { parameters };
     }
-
 }

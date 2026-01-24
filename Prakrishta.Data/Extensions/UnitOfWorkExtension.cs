@@ -11,6 +11,8 @@ namespace Prakrishta.Data.Extensions
 {
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
+    using Prakrishta.Data.RepositoriesV2.Implementations;
+    using Prakrishta.Data.RepositoriesV2.Interfaces;
 
     /// <summary>
     /// Extension class to add unit of work middleware
@@ -27,6 +29,7 @@ namespace Prakrishta.Data.Extensions
         {
             services.AddScoped<IUnitOfWork, UnitOfWork<TContext>>();
             services.AddScoped<IUnitOfWork<TContext>, UnitOfWork<TContext>>();
+            services.AddScoped<ISqlExecutor, EfCoreSqlExecutor>();
             services.AddScoped<IUnitOfWorkV2<TContext>, UnitOfWorkV2<TContext>>();
         }
     }

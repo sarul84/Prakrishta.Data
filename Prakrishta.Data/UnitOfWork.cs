@@ -123,12 +123,17 @@ namespace Prakrishta.Data
         }
     }
 
-    public class UnitOfWorkV2<TContext>(TContext context) : IUnitOfWorkV2<TContext> where TContext : DbContext
+    public class UnitOfWorkV2<TContext>(TContext context, ISqlExecutor sqlExecutor) : IUnitOfWorkV2<TContext> where TContext : DbContext
     {
         /// <summary>
         /// Holds collection of repositories
         /// </summary>
         private ConcurrentDictionary<string, object> repositories;
+
+        /// <summary>
+        /// Gets SQL executor to execute raw SQL queries
+        /// </summary>
+        public ISqlExecutor Sql => sqlExecutor;
 
         /// <summary>
         /// Gets database context object

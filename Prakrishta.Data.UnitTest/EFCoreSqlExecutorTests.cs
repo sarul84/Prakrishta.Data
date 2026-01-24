@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Prakrishta.Data.RepositoriesV2.Implementations;
 
 namespace Prakrishta.Data.UnitTest
@@ -9,7 +8,7 @@ namespace Prakrishta.Data.UnitTest
         [Fact]
         public async Task QueryAsync_ReturnsAllRows()
         {
-            using var context = CreateSqliteContext();
+            using var context = SqliteInMemoryFactory.CreateContext();
 
             context.Users.AddRange(
                 new User { Id = 1, Name = "A" },
@@ -27,7 +26,7 @@ namespace Prakrishta.Data.UnitTest
         [Fact]
         public async Task QueryAsync_FiltersRows()
         {
-            using var context = CreateSqliteContext();
+            using var context = SqliteInMemoryFactory.CreateContext();
             context.Users.AddRange(
                 new User { Id = 1, Name = "John" },
                 new User { Id = 2, Name = "Jane" }
@@ -48,7 +47,7 @@ namespace Prakrishta.Data.UnitTest
         [Fact]
         public async Task QuerySingleAsync_ReturnsSingleRow()
         {
-            using var context = CreateSqliteContext();
+            using var context = SqliteInMemoryFactory.CreateContext();
 
             context.Users.Add(new User { Id = 1, Name = "John" });
             context.SaveChanges();
@@ -66,7 +65,7 @@ namespace Prakrishta.Data.UnitTest
         [Fact]
         public async Task QuerySingleAsync_ReturnsNull_WhenNoMatch()
         {
-            using var context = CreateSqliteContext();
+            using var context = SqliteInMemoryFactory.CreateContext();
 
             context.Users.Add(new User { Id = 1, Name = "John" });
             context.SaveChanges();
@@ -83,11 +82,11 @@ namespace Prakrishta.Data.UnitTest
         [Fact]
         public async Task ExecuteAsync_InsertsRow()
         {
-            using var context = CreateSqliteContext();
+            using var context = SqliteInMemoryFactory.CreateContext();
 
             var executor = new EfCoreSqlExecutor(context);
 
-            var rows = await executor.ExecuteAsync(
+            var rows = await executor.ExecuteRawAsync(
                 "INSERT INTO Users (Id, Name) VALUES (1, 'InsertedUser')"
             );
 
@@ -98,7 +97,7 @@ namespace Prakrishta.Data.UnitTest
         [Fact]
         public async Task ExecuteAsync_UpdatesRow()
         {
-            using var context = CreateSqliteContext();
+            using var context = SqliteInMemoryFactory.CreateContext();
 
             context.Users.Add(new User { Id = 1, Name = "Old" });
             context.SaveChanges();
@@ -107,7 +106,7 @@ namespace Prakrishta.Data.UnitTest
 
             var executor = new EfCoreSqlExecutor(context);
 
-            var rows = await executor.ExecuteAsync(
+            var rows = await executor.ExecuteRawAsync(
                 "UPDATE Users SET Name = 'New' WHERE Id = 1"
             );
 
@@ -120,14 +119,14 @@ namespace Prakrishta.Data.UnitTest
         [Fact]
         public async Task ExecuteAsync_DeletesRow()
         {
-            using var context = CreateSqliteContext();
+            using var context = SqliteInMemoryFactory.CreateContext();
 
             context.Users.Add(new User { Id = 1, Name = "ToDelete" });
             context.SaveChanges();
 
             var executor = new EfCoreSqlExecutor(context);
 
-            var rows = await executor.ExecuteAsync(
+            var rows = await executor.ExecuteRawAsync(
                 "DELETE FROM Users WHERE Id = 1"
             );
 
@@ -138,7 +137,7 @@ namespace Prakrishta.Data.UnitTest
         [Fact]
         public async Task QueryAsync_Throws_WhenTypeIsNotEntity()
         {
-            using var context = CreateSqliteContext();
+            using var context = SqliteInMemoryFactory.CreateContext();
 
             var executor = new EfCoreSqlExecutor(context);
 
@@ -147,20 +146,5 @@ namespace Prakrishta.Data.UnitTest
                 await executor.QueryAsync<string>("SELECT 'Hello'");
             });
         }
-
-        private static TestDbContext CreateSqliteContext()
-        {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
-
-            var options = new DbContextOptionsBuilder<TestDbContext>()
-                .UseSqlite(connection)
-                .Options;
-
-            var context = new TestDbContext(options);
-            context.Database.EnsureCreated();
-            return context;
-        }
-
     }
 }
