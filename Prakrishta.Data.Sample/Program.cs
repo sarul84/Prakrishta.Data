@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prakrishta.Data.RepositoriesV2.Interfaces;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -24,10 +25,11 @@ namespace Prakrishta.Data.Sample
         static void DisconnectedEntityOperations()
         {
             DatabaseContext databaseContext = new DatabaseContext();
+            ISqlExecutor sql = new RepositoriesV2.Implementations.EfCoreSqlExecutor(databaseContext);
 
             var domainUsers = new Collection<DomainModel.User>();
 
-            using (var unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext))
+            using (var unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext, sql))
             {
                 var repository = unitOfWork.GetQueryRepository<User, Guid>();
 
@@ -93,7 +95,7 @@ namespace Prakrishta.Data.Sample
             }
 
             databaseContext = new DatabaseContext();
-            using (var unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext))
+            using (var unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext, sql))
             {
                 unitOfWork.GetPersistenceRepository<User, Guid>()?.Update(dusers);
                 unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
@@ -109,9 +111,10 @@ namespace Prakrishta.Data.Sample
         static void ConnectedEntityOperations()
         {
             DatabaseContext databaseContext = new DatabaseContext();
+            ISqlExecutor sql = new RepositoriesV2.Implementations.EfCoreSqlExecutor(databaseContext);
 
             var domainUsers = new Collection<DomainModel.User>();
-            IUnitOfWorkV2<DatabaseContext> unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext);
+            IUnitOfWorkV2<DatabaseContext> unitOfWork = new UnitOfWorkV2<DatabaseContext>(databaseContext, sql);
             var repository = unitOfWork.GetQueryRepository<User,Guid>();
 
             var users = repository?.GetAll(asNoTracking: true) ?? [];
