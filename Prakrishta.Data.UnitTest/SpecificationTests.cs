@@ -144,6 +144,28 @@ namespace Prakrishta.Data.UnitTest
         }
 
         [Fact]
+        public void EvaluateQuery_AppliesOrderingBeforePaging()
+        {
+            var context = CreateContext();
+
+            context.TestEntities.AddRange(
+                new TestEntity { Id = 3 },
+                new TestEntity { Id = 1 },
+                new TestEntity { Id = 4 },
+                new TestEntity { Id = 2 }
+            );
+            context.SaveChanges();
+
+            var spec = new TestSpecification(null);
+            spec.ApplyOrderByPublic(q => q.OrderBy(x => x.Id));
+            spec.ApplyPagingPublic(2, 2);
+
+            var result = SpecificationExecutor.EvaluateQuery(context.TestEntities, spec).ToList();
+
+            Assert.Equal(new[] { 3, 4 }, result.Select(x => x.Id).ToArray());
+        }
+
+        [Fact]
         public async Task EvaluateAsync_ReturnsCorrectCount_ForAggregationSpec()
         {
             // Arrange

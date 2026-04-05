@@ -4,14 +4,14 @@
     <TargetFramework>net10.0</TargetFramework>
     <Authors>Arul Sengottaiyan</Authors>
     <Company>Prakrishta Technologies</Company>
-	<Version>1.2.3</Version>
-	<AssemblyVersion>1.2.3.0</AssemblyVersion>
+	  <Version>1.2.4</Version>
+	  <AssemblyVersion>1.2.4.0</AssemblyVersion>
     <Description>Generic Repository and Unit of work pattern with EF.Core</Description>
     <PackageProjectUrl>https://github.com/sarul84/Prakrishta.Data</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sarul84/Prakrishta.Data</RepositoryUrl>
     <PackageTags>C#, EF, EFCore, .NetStandard, Repository pattern, Unitofwork, uow</PackageTags>
     <Copyright>Copyright © Prakrishta Technologies 2017</Copyright>
-	<Nullable>enable</Nullable>
+	  <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
