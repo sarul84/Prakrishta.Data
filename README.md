@@ -637,7 +637,7 @@ var user = await _uow
 
 ```
 public sealed class ActiveUsersCountSpec 
-    : IResultSpecification<User, int>
+    : ISpecification<User, int>
 {
     public Expression<Func<User, bool>>? Criteria => u => u.IsActive;
     public IList<Expression<Func<User, object>>>? IncludeProperties => null;
@@ -662,7 +662,7 @@ var count = await uow.Repository<User>().EvaluateAsync(new ActiveUsersCountSpec(
 **DTO projection**
 ```
 public sealed class UserSummarySpec 
-    : IResultSpecification<User, UserSummaryDto>
+    : ISpecification<User, UserSummaryDto>
 {
     public Func<IQueryable<User>, IQueryable<UserSummaryDto>> Projection =>
         q => q.Select(u => new UserSummaryDto(u.Id, u.Name));
